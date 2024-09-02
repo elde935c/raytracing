@@ -1,7 +1,7 @@
 namespace raytracer.Domain.Tests;
 using Xunit;
 using raytracer.Domain;
-//using Microsoft.VisualStudio.TestTools.UnitTesting;
+using raytracer.Domain.Exceptions;
 
 public class VectorTest
 {
@@ -31,6 +31,17 @@ public class VectorTest
 
         Assert.Equal(v1, v2);
     }
+
+    [Theory]
+    [InlineData(0, 2)]
+    [InlineData(1, 3)]
+    [InlineData(2, 6)]
+    public void testBrackerOperator(int index, double value)
+    {
+        Vector v = new([2, 3, 6]);
+        Assert.Equal(value, v[index]);
+    }
+
 
     [Fact]
     public void checkAddition()
@@ -82,6 +93,16 @@ public class VectorTest
     }
 
     [Fact]
+    public void checkDivisionByZero()
+    {
+        Vector v1 = new Vector(new double[] { 1, 2, 3 });
+        double scalar = 0;
+
+        Assert.Throws<DivisionByZeroException>(() => 
+            v1/scalar);
+    }
+
+    [Fact]
     public void testDotProduct()
     {
         Vector v1 = new Vector(new double[] { 1, 2, 3 });
@@ -90,5 +111,4 @@ public class VectorTest
         double dotV1V2 = 32;
         Assert.Equal(dotV1V2, Vector.dot(v1, v2));
     }
-
 }

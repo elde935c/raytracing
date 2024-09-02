@@ -1,4 +1,6 @@
 
+using raytracer.Domain.Exceptions;
+
 namespace raytracer.Domain;
 
 public class Vector
@@ -19,18 +21,20 @@ public class Vector
     {
         entries = new double[vector.size()];
         for (int i = 0; i < vector.size(); i++)
-            entries[i] = vector.get(i);
+            entries[i] = vector[i];
     }
 
-    public double get(int index) { return entries[index]; }
-
-    public void add(int index, double value) { entries[index] += value; }
+    public double this[int i]
+    {
+        get { return entries[i]; }
+        set { entries[i] = value; }
+    }
 
     public static Vector operator +(Vector v1, Vector v2)
     {
         Vector returnVector = v1;
         for (int i = 0; i < v1.size(); i++)
-            returnVector.add(i, v2.get(i));
+            returnVector[i] += v2[i];
         return returnVector;
     }
 
@@ -38,7 +42,7 @@ public class Vector
     {
         Vector returnVector = v1;
         for (int i = 0; i < v1.size(); i++)
-            returnVector.add(i, -v2.get(i));
+            returnVector[i] -= v2[i];
         return returnVector;
     }
 
@@ -46,23 +50,27 @@ public class Vector
     {
         double[] scalarTimesVectorEntries = new double[v.size()];
         for (int i = 0; i < v.size(); i++)
-            scalarTimesVectorEntries[i] = v.get(i) * scalar;
+            scalarTimesVectorEntries[i] = v[i] * scalar;
         return new Vector(scalarTimesVectorEntries);
     }
 
     public static Vector operator /(Vector v, double scalar)
     {
-        double[] vDividedByScalar = new double[v.size()];
-        for (int i = 0; i < v.size(); i++)
-            vDividedByScalar[i] = v.get(i) / scalar;
-        return new Vector(vDividedByScalar);
+        if (Math.Abs(scalar) > 1e-9)
+        {
+            double[] vDividedByScalar = new double[v.size()];
+            for (int i = 0; i < v.size(); i++)
+                vDividedByScalar[i] = v[i] / scalar;
+            return new Vector(vDividedByScalar);
+        }
+        else throw new DivisionByZeroException();
     }
 
     public static double dot(Vector v1, Vector v2)
     {
         double dotProduct = 0;
         for (int i = 0; i < v1.size(); i++)
-            dotProduct += v1.get(i) * v2.get(i);
+            dotProduct += v1[i] * v2[i];
         return dotProduct;
     }
 
