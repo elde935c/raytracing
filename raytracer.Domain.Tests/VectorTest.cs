@@ -54,6 +54,17 @@ public class VectorTest
     }
 
     [Fact]
+    public void testMultipleAddition()
+    {
+        Vector v1 = new Vector(new double[] { 1, 2, 3 });
+        Vector v2 = new Vector(new double[] { 2, 5, 1 });
+        Vector v3 = new Vector(new double[] { 4, 5, 7 });
+        Vector solution = new Vector(new double[] { 7, 12, 11 });
+
+        Assert.Equal(solution, v1 + v2 + v3);
+    }
+
+    [Fact]
     public void checkSubtraction()
     {
         Vector v1 = new Vector(new double[] { 1, 2, 3 });
@@ -80,6 +91,17 @@ public class VectorTest
         Vector solution = new([3, 6, 9]);
 
         Assert.Equal(solution, scalar*v1);
+    }
+
+    [Fact]
+    public void testOrderOfCalculations()
+    {
+        Vector v1 = new Vector(new double[] { 1, 2, 3 });
+        Vector v2 = new Vector(new double[] { 2, 5, 1 });
+        double scalar = 2;
+        Vector solution = new([5, 12, 5]);
+
+        Assert.Equal(solution, v1 + scalar*v2);
     }
 
     [Fact]

@@ -25,7 +25,8 @@ public class Sphere : Shape
         Vector lineStartToCenter = line.getStart() - this.center;
         double A = Vector.dot(lineDirection, lineDirection);
         double B = 2 * Vector.dot(lineStartToCenter, lineDirection);
-        double C = Vector.dot(lineStartToCenter, lineStartToCenter) - Math.pow(this.radius, 2);
+        double C = Vector.dot(lineStartToCenter, lineStartToCenter) -
+            Math.Pow(this.radius, 2);
 
         double Discriminant = B * B - 4.0f * A * C;
 

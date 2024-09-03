@@ -54,6 +54,11 @@ public class Vector
         return new Vector(scalarTimesVectorEntries);
     }
 
+    public static Vector operator *(Vector v, double scalar)
+    {
+        return scalar * v;
+    }
+
     public static Vector operator /(Vector v, double scalar)
     {
         if (Math.Abs(scalar) > 1e-9)
