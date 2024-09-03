@@ -5,7 +5,7 @@ namespace raytracer.Domain;
 
 public class Vector
 {
-    private double[] entries;
+    private readonly double[] entries;
 
     public Vector(double[] entries)
     {
@@ -32,17 +32,17 @@ public class Vector
 
     public static Vector operator +(Vector v1, Vector v2)
     {
-        Vector returnVector = v1;
+        Vector returnVector = new Vector(v1.size());
         for (int i = 0; i < v1.size(); i++)
-            returnVector[i] += v2[i];
+            returnVector[i] = v1[i] + v2[i];
         return returnVector;
     }
 
     public static Vector operator -(Vector v1, Vector v2)
     {
-        Vector returnVector = v1;
+        Vector returnVector = new Vector(v1.size());
         for (int i = 0; i < v1.size(); i++)
-            returnVector[i] -= v2[i];
+            returnVector[i] = v1[i] - v2[i];
         return returnVector;
     }
 
@@ -88,6 +88,11 @@ public class Vector
     }
 
     public int size() { return entries.Length; }
+
+    public string ToString()
+    {
+        return entries.ToString();
+    }
 
     public override bool Equals(object obj)
     {

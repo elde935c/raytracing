@@ -64,6 +64,29 @@ public class VectorTest
         Assert.Equal(solution, v1 + v2 + v3);
     }
 
+    [Fact] public void additionShouldNotAffectFirstVector()
+    {
+        Vector v1 = new Vector(new double[] { 1, 2, 3 });
+        Vector v2 = new Vector(new double[] { 2, 5, 1 });
+        Vector solution = new Vector(new double[] { 1, 2, 3 });
+
+        Vector v3 = v1 + v2;
+
+        Assert.Equal(solution, v1);
+    }
+
+    [Fact]
+    public void additionShouldNotAffectSecondVector()
+    {
+        Vector v1 = new Vector(new double[] { 1, 2, 3 });
+        Vector v2 = new Vector(new double[] { 2, 5, 1 });
+        Vector solution = new Vector(new double[] { 2, 5, 1 });
+
+        Vector v3 = v1 + v2;
+
+        Assert.Equal(solution, v2);
+    }
+
     [Fact]
     public void checkSubtraction()
     {

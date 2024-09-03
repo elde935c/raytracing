@@ -4,8 +4,8 @@ namespace raytracer.Domain;
 
 public class Line
 {
-    private Vector start;
-    private Vector direction;
+    private readonly Vector start;
+    private readonly Vector direction;
 
     public Line(Vector start, Vector direction)
     {

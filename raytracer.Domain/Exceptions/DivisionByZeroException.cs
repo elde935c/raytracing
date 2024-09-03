@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace raytracer.Domain.Exceptions
+﻿namespace raytracer.Domain.Exceptions
 {
     public class DivisionByZeroException : Exception
     {

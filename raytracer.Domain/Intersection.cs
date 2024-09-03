@@ -2,8 +2,8 @@
 
 public class Intersection
 {
-    private Vector coord;
-    private Shape shape;
+    private readonly Vector coord;
+    private readonly Shape shape;
 
     public Intersection(Vector coord, Shape shape)
     {
@@ -12,6 +12,7 @@ public class Intersection
     }
 
     public Vector getCoord() { return coord; }
+
+    public Shape getShape() { return shape; }
 }
 
-//todo write Equals and hashcode
