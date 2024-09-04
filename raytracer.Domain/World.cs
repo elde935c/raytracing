@@ -27,6 +27,8 @@ public class World
                 }
             }
         }
+        if (closest != null && closest.getShape().getRefracts())
+            return getClosestIntersection(closest.getRefractedLine(line));
         return closest;
     }
 
@@ -49,7 +51,7 @@ public class World
             lightSource.getCoord() - intersectionCoord);
 
         if (getClosestIntersection(intersectionToLight) == null)
-            return intersection.getShape().getDiffusionConstant(
+            return intersection.getShape().getDiffusionConstantFromLine(
                 intersectionToLight);
         return 0.0;
     }

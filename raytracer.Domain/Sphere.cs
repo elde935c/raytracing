@@ -8,14 +8,14 @@ public class Sphere : Shape
     private Vector center;
     private double radius;
 
-    public Sphere(Vector center, double radius, double diffusionConstant)
-        : base(diffusionConstant)
+    public Sphere(Vector center, double radius, double diffusionConstant, bool refracts, double refractionIndex)
+        : base(diffusionConstant, refracts, refractionIndex)
     {
         this.center = center;
         this.radius = radius;
     }
 
-    public Sphere() : base(1)
+    public Sphere() : base(1, false, 1)
     {
         this.center = new([0, 0, 0]);
         this.radius = 1;
@@ -63,19 +63,26 @@ public class Sphere : Shape
         return Math.Abs((this.center - point).norm()-this.radius) < 1e-8;
     }
 
-    public override double getDiffusionConstant(Line ln)
+    public Vector getCenter() { return this.center; }
+
+    public double getRadius() { return this.radius; }
+
+    public override bool Equals(object obj)
     {
-        Vector lineStart = ln.getStart();
-        if (pointIsOnShape(lineStart))
-        {
-            Vector lineDirection = ln.getDirection();
-            // diffusion coefficient is based on the angle between the normal of the shape and the line from the
-            return this.diffusionConstant * Math.Max(0,
-                Vector.dot(getNormal(ln.getStart()), lineDirection)
-                / lineDirection.norm());
-        }
-        else throw new PointNotOnShapeException(lineStart.ToString() 
-            + " is not on sphere with center " + this.center.ToString +
-            " and radius " + this.radius);
+        if (obj == null || GetType() != obj.GetType())
+            return false;
+
+        Vector centerOther = ((Sphere)obj).getCenter();
+        double radiusOther = ((Sphere)obj).getRadius();
+
+        return center.Equals(centerOther) &&
+            Math.Abs(radiusOther - this.radius) < 1e-9 &&
+            base.Equals(obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return center.GetHashCode() + radius.GetHashCode() +
+            base.GetHashCode();
     }
 }

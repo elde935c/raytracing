@@ -32,45 +32,31 @@ public class SphereTest
     }
 
 
-    public void testDiffusionConstantWithPointNotOnSphere()
+    [Fact]
+    public void testIfTwoIdenticalSpheresAreTheSame()
     {
-        Sphere sphere = new Sphere(new([1, 0, 0]), 2, 1);
-        Vector normalAt = new([1, 2, 2]);
-        Vector direction = new([0, 1, 0]);
-        Line line = new Line(normalAt, direction);
+        Sphere sphere1 = new Sphere();
+        Sphere sphere2 = new Sphere();
 
-        Assert.Throws<PointNotOnShapeException>(() =>
-            sphere.getDiffusionConstant(line));
+        Assert.Equal(sphere1, sphere2);
     }
 
-    public void testDiffusionConstantPerpendicularLineShouldReturnOne()
+    [Fact]
+    public void testIfTwoDifferentSpheresAreUnequal()
     {
-        Sphere sphere = new Sphere();
-        Vector normalAt = new([1, 0, 0]);
-        Vector direction = new([1, 0, 0]);
-        Line line = new Line(normalAt, direction);
+        Sphere sphere1 = new Sphere();
+        Sphere sphere2 = new Sphere(new([1,0,0]), 1, 1, true, 1);
 
-        Assert.True(Math.Abs(sphere.getDiffusionConstant(line) - 1) < 1e-5);
+        Assert.NotEqual(sphere1, sphere2);
     }
 
-    public void testDiffusionConstantParallelLineShouldReturnZero()
+    [Fact]
+    public void testIfTwoDifferentRadiusSpheresAreUnequal()
     {
-        Sphere sphere = new Sphere();
-        Vector normalAt = new([1, 0, 0]);
-        Vector direction = new([0, 1, 0]);
-        Line line = new Line(normalAt, direction);
+        Sphere sphere1 = new Sphere();
+        Sphere sphere2 = new Sphere(new([0, 0, 0]), 2, 1, true, 1);
 
-        Assert.True(Math.Abs(sphere.getDiffusionConstant(line)) < 1e-5);
-    }
-
-    public void testDiffusionConstantLineBehindSphereSurfaceShouldReturnZero()
-    {
-        Sphere sphere = new Sphere();
-        Vector normalAt = new([1, 0, 0]);
-        Vector direction = new([-1, -1, 0]);
-        Line line = new Line(normalAt, direction);
-
-        Assert.True(Math.Abs(sphere.getDiffusionConstant(line)) < 1e-5);
+        Assert.NotEqual(sphere1, sphere2);
     }
 
 }

@@ -87,6 +87,11 @@ public class Vector
         return Math.Sqrt(vectorNorm);
     }
 
+    public double sum()
+    {
+        return entries.Sum();
+    }
+
     public int size() { return entries.Length; }
 
     public string ToString()
@@ -100,7 +105,7 @@ public class Vector
             return false;
 
         Vector other = (Vector)obj;
-        return (other - this).norm() < 1e-9;
+        return (other - this).norm() < 1e-5;
     }
 
     public override int GetHashCode()

@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace raytracer.Domain;
 
@@ -43,11 +44,22 @@ public class ViewPort
         return new Line(viewPoint, getCoordinate(i) - viewPoint);
     }
 
-    public void createImage(string imageName)
+    public void createImage(string imageName, Boolean parallel)
     {
-        for (int i = 0; i<screenHeight*screenWidth; i++)
+        if (parallel)
         {
-            pixels[i].SetRgb(scene.GetWorld().getBrightness(getLine(i)));
+            Parallel.For(0, screenWidth * screenHeight, i =>
+            {
+                pixels[i].SetRgb(scene.GetWorld().getBrightness(getLine(i)));
+            });
+        }
+
+        else
+        {
+            for (int i=0; i<screenHeight*screenWidth; i++)
+            {
+                pixels[i].SetRgb(scene.GetWorld().getBrightness(getLine(i)));
+            }
         }
 
         // Create a bitmap from the RGB values
