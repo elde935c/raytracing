@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Reflection;
 
 namespace raytracer.Domain;
 
@@ -25,13 +26,16 @@ public class ViewPort
         this.scene = scene;
 
         pixels = new Pixel[screenWidth * screenHeight];
+        for (int i = 0; i < screenWidth * screenHeight; i++) pixels[i] = new Pixel();
     }
 
     private Vector getCoordinate(int i)
     {
-        double x = (i % screenWidth) + 0.5;
-        double y = ((int)i / screenHeight) + 0.5;
-        return x * (corners[1] - corners[0]) - y*(corners[2] - corners[1]); 
+        // x,y \in (0,1)
+        double x = ((i % screenWidth) + 0.5)/screenWidth;
+        double y = (Math.Floor(i / screenWidth + 0.0) + 0.5) / screenHeight;
+        return corners[0] + x * (corners[1] - corners[0]) +
+            y*(corners[2] - corners[0]); 
     }
 
     private Line getLine(int i)
@@ -39,7 +43,7 @@ public class ViewPort
         return new Line(viewPoint, getCoordinate(i) - viewPoint);
     }
 
-    public void createImage()
+    public void createImage(string imageName)
     {
         for (int i = 0; i<screenHeight*screenWidth; i++)
         {
@@ -49,8 +53,12 @@ public class ViewPort
         // Create a bitmap from the RGB values
         Bitmap image = CreateBitmapFromRGBArray();
 
+        string dir = System.IO.Directory.GetCurrentDirectory();
+        dir = dir.Substring(0, dir.IndexOf("bin"));
+        dir = dir.Replace("\\", "/");
+
         // Save the bitmap as an image file
-        image.Save("output.png", System.Drawing.Imaging.ImageFormat.Png);
+        image.Save(dir + "/output/" + imageName, System.Drawing.Imaging.ImageFormat.Png);
     }
 
     private Bitmap CreateBitmapFromRGBArray()

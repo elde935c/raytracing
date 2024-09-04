@@ -11,7 +11,7 @@ public class World
         this.lightSource = lightsource;
     }
 
-    public Intersection getClosestIntersection(Line line) //todo make private
+    private Intersection getClosestIntersection(Line line) //todo make private
     {
         Intersection closest = null;
         foreach (Shape shape in shapes)
@@ -30,6 +30,8 @@ public class World
         return closest;
     }
 
+
+
     private Intersection returnClosest(Intersection i1,
         Intersection i2, Line line)
     {
@@ -40,7 +42,7 @@ public class World
         return i2;
     }
 
-    public double calcBrightness(Intersection intersection) //todo make private
+    private double calcBrightness(Intersection intersection) 
     {
         Vector intersectionCoord = intersection.getCoord();
         Line intersectionToLight = new Line(intersectionCoord,
@@ -55,6 +57,18 @@ public class World
     public double getBrightness(Line line)
     {
         Intersection intersection = getClosestIntersection(line);
+        if (intersection==null) return 0.0;
+        return calcBrightness(intersection);
+    }
+
+
+    internal protected Intersection getClosestIntersectionWrapper(Line line)
+    {
+        return getClosestIntersection(line);
+    }
+
+    internal protected double calcBrightnessWrapper(Intersection intersection)
+    {
         return calcBrightness(intersection);
     }
 }
