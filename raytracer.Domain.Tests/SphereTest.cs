@@ -2,9 +2,12 @@
 using Xunit;
 using raytracer.Domain;
 using raytracer.Domain.Exceptions;
+using System.Drawing;
 
 public class SphereTest
 {
+    Color color = Color.White;
+
     [Fact]
     public void lineAlongZaxisThroughUnitSphere()
     {
@@ -45,7 +48,7 @@ public class SphereTest
     public void testIfTwoDifferentSpheresAreUnequal()
     {
         Sphere sphere1 = new Sphere();
-        Sphere sphere2 = new Sphere(new([1,0,0]), 1, 1, true, 1);
+        Sphere sphere2 = new Sphere(new([1, 0, 0]), 1, 1, true, 1, color);
 
         Assert.NotEqual(sphere1, sphere2);
     }
@@ -54,7 +57,7 @@ public class SphereTest
     public void testIfTwoDifferentRadiusSpheresAreUnequal()
     {
         Sphere sphere1 = new Sphere();
-        Sphere sphere2 = new Sphere(new([0, 0, 0]), 2, 1, true, 1);
+        Sphere sphere2 = new Sphere(new([0, 0, 0]), 2, 1, true, 1, color);
 
         Assert.NotEqual(sphere1, sphere2);
     }

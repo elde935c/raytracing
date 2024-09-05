@@ -1,17 +1,21 @@
 ﻿using Xunit;
 using raytracer.Domain;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace raytracer.Domain.Tests;
 
 public class ViewPortTest
 {
+    Color color = Color.White;
+    Color backgroundColor = Color.DarkBlue;
+
     [Fact]
     public void testIfPictureIsMadeUnitSphereLigthFromAbove()
     {
         List<Shape> shapes = new List<Shape>();
         shapes.Add(new Sphere());
-        World world = new World(shapes, new LightSource(new([0, 10, 0]), 1));
+        World world = new World(shapes, new LightSource(new([0, 10, 0]), 1), backgroundColor);
 
         Vector[] corners = [new([-0.5, 0.5, -4]),
                             new([0.5, 0.5, -4]),
@@ -35,9 +39,9 @@ public class ViewPortTest
         shapes.Add(new Sphere());
         Boolean refracts = false;
         double refractionIndex = 1;
-        shapes.Add(new Sphere(new([3, 0, 2]), 1, 1, refracts, refractionIndex));
-        shapes.Add(new Sphere(new([0, 2, -2]), 0.2, 0.5, refracts, refractionIndex));
-        World world = new World(shapes, new LightSource(new([0, 10, 0]), 1));
+        shapes.Add(new Sphere(new([3, 0, 2]), 1, 1, refracts, refractionIndex, color));
+        shapes.Add(new Sphere(new([0, 2, -2]), 0.2, 0.5, refracts, refractionIndex, color));
+        World world = new World(shapes, new LightSource(new([0, 10, 0]), 1), backgroundColor);
 
         Vector[] corners = [new([-0.5, 0.5, -4]),
                         new([0.5, 0.5, -4]),
@@ -59,9 +63,9 @@ public class ViewPortTest
         shapes.Add(new Sphere());
         Boolean refracts = false;
         double refractionIndex = 1;
-        shapes.Add(new Sphere(new([3, 0, 2]), 1, 1, refracts, refractionIndex));
-        shapes.Add(new Sphere(new([0, 2, -2]), 0.2, 0.5, refracts, refractionIndex));
-        World world = new World(shapes, new LightSource(new([0, 10, 0]), 1));
+        shapes.Add(new Sphere(new([3, 0, 2]), 1, 1, refracts, refractionIndex, color));
+        shapes.Add(new Sphere(new([0, 2, -2]), 0.2, 0.5, refracts, refractionIndex, color));
+        World world = new World(shapes, new LightSource(new([0, 10, 0]), 1), backgroundColor);
 
         Vector[] corners = [new([-0.5, 0.5, -4]),
                         new([0.5, 0.5, -4]),
@@ -98,10 +102,10 @@ public class ViewPortTest
     {
         List<Shape> shapes = new List<Shape>();
         shapes.Add(new Sphere());
-        shapes.Add(new Sphere(new([3, 0, 0]), 0.1, 1, true, 1.5));
+        shapes.Add(new Sphere(new([3, 0, 0]), 0.1, 1, true, 1.5, color));
         
         World world = new World(shapes,
-            new LightSource(new([0, 10, 0]), 1));
+            new LightSource(new([0, 10, 0]), 1), backgroundColor);
 
         Vector[] corners = [new([6, 0.5, -0.5]),
                         new([6, 0.5, 0.5]),
@@ -113,7 +117,29 @@ public class ViewPortTest
 
         ViewPort viewPort = new ViewPort(corners, viewPoint, 720, 720, scene);
 
-        viewPort.createImage("outputTestLense.png", false);
+        viewPort.createImage("outputTestLense.png", true);
+    }
+
+    [Fact]
+    public void viewFromWithinSphere()
+    {
+        List<Shape> shapes = new List<Shape>();
+        shapes.Add(new Sphere(new([0, 0, 0]), 20, 1, false, 1.5, color));
+
+        World world = new World(shapes,
+            new LightSource(new([0, 19, 0]), 1), backgroundColor);
+
+        Vector[] corners = [new([18, 0.5, -0.5]),
+                        new([18, 0.5, 0.5]),
+                        new([18, -0.5, -0.5])];
+
+        Vector viewPoint = new([19, 0, 0]);
+
+        Scene scene = new Scene(world, corners, viewPoint, 720, 720);
+
+        ViewPort viewPort = new ViewPort(corners, viewPoint, 720, 720, scene);
+
+        viewPort.createImage("withinSphereView.png", true);
     }
 }
 

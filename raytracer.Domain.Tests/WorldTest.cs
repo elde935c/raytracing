@@ -1,5 +1,6 @@
 ﻿using Xunit;
 using raytracer.Domain;
+using System.Drawing;
 
 
 namespace raytracer.Domain.Tests
@@ -8,6 +9,8 @@ namespace raytracer.Domain.Tests
     {
         Boolean refracts = false;
         double refractionIndex = 1;
+        Color color = Color.White;
+        Color backgroundColor = Color.DarkBlue;
         List<Shape> shapes;
 
         public WorldTest() 
@@ -20,7 +23,7 @@ namespace raytracer.Domain.Tests
         public void testIfClosestIntersectionIsReturnedOneSphere()
         {
             shapes.Add(new Sphere());
-            World world = new World(shapes, new LightSource(new([0, 10, 0]), 1));
+            World world = new World(shapes, new LightSource(new([0, 10, 0]), 1), backgroundColor);
 
             Line line = new Line(new([10, 0, 0]), new([-1, 0, 0]));
 
@@ -35,9 +38,9 @@ namespace raytracer.Domain.Tests
         public void testIfClosestIntersectionIsReturnedTwoSpheres()
         {
             shapes.Add(new Sphere());
-            shapes.Add(new Sphere(new([-3, 0, 0]), 1, 1, refracts, refractionIndex));
+            shapes.Add(new Sphere(new([-3, 0, 0]), 1, 1, refracts, refractionIndex, color));
             World world = new World(shapes,
-                new LightSource(new([0, 10, 0]), 1));
+                new LightSource(new([0, 10, 0]), 1), backgroundColor);
 
             Line line = new Line(new([10, 0, 0]), new([-1, 0, 0]));
 
@@ -52,8 +55,8 @@ namespace raytracer.Domain.Tests
         public void testIfClosestIntersectionIsReturnedOverlappingSpheres()
         {
             shapes.Add(new Sphere());
-            shapes.Add(new Sphere(new([-3, 0, 0]), 3, 1, refracts, refractionIndex));
-            World world = new World(shapes, new LightSource(new([0, 10, 0]), 1));
+            shapes.Add(new Sphere(new([-3, 0, 0]), 3, 1, refracts, refractionIndex, color));
+            World world = new World(shapes, new LightSource(new([0, 10, 0]), 1), backgroundColor);
 
             Line line = new Line(new([10, 0, 0]), new([-1, 0, 0]));
 
@@ -68,8 +71,8 @@ namespace raytracer.Domain.Tests
         public void testLineNotIntersectionShouldReturnNull()
         {
             shapes.Add(new Sphere());
-            shapes.Add(new Sphere(new([-3, 0, 0]), 1, 1, refracts, refractionIndex));
-            World world = new World(shapes, new LightSource(new([0, 10, 0]), 1));
+            shapes.Add(new Sphere(new([-3, 0, 0]), 1, 1, refracts, refractionIndex, color));
+            World world = new World(shapes, new LightSource(new([0, 10, 0]), 1), backgroundColor);
 
             Line line = new Line(new([-1.5, -10, 0]), new([0, 1, 0]));
 
@@ -82,8 +85,8 @@ namespace raytracer.Domain.Tests
         public void lineThroughLenseToNothing()
         {
             shapes.Add(new Sphere(new([-3, 0, 0]), 1, 1,
-                true, refractionIndex));
-            World world = new World(shapes, new LightSource(new([0, 10, 0]), 1));
+                true, refractionIndex, color));
+            World world = new World(shapes, new LightSource(new([0, 10, 0]), 1), backgroundColor);
 
             Line line = new Line(new([-10, 0, 0]), new([1, 0, 0]));
 
@@ -98,9 +101,10 @@ namespace raytracer.Domain.Tests
         {
             Sphere sphere = new Sphere();
             shapes.Add(sphere);
-            shapes.Add(new Plane(new([-3,0,0]),
-                new([1,0,0]), 1, true, 1));
-            World world = new World(shapes, new LightSource(new([0, 10, 0]), 1));
+            shapes.Add(new Plane(new([-3, 0, 0]),
+                new([1, 0, 0]), 1, true, 1.5, color));
+            World world = new World(shapes,
+                new LightSource(new([0, 10, 0]), 1), backgroundColor);
 
             Line line = new Line(new([-10, 0, 0]), new([1, 0, 0]));
 
@@ -119,11 +123,11 @@ namespace raytracer.Domain.Tests
             Sphere sphere = new Sphere();
             shapes.Add(sphere);
             shapes.Add(new Sphere(new([-3, 0, 0]), 1, 1,
-                true, refractionIndex));
+                true, refractionIndex, color));
             shapes.Add(new Sphere(new([-5, 0, 0]), 1, 1,
-                true, refractionIndex));
-            World world = new World(shapes, 
-                new LightSource(new([0, 10, 0]), 1));
+                true, refractionIndex, color));
+            World world = new World(shapes,
+                new LightSource(new([0, 10, 0]), 1), backgroundColor);
 
             Line line = new Line(new([-10, 0, 0]), new([1, 0, 0]));
 
@@ -137,64 +141,105 @@ namespace raytracer.Domain.Tests
         }
 
         [Fact]
-        public void returnNullWhenTrappedInSphere()
+        public void boxedInPointOfView()
         {
-            Vector center = new([0, 0, 0]);
-            Sphere smallSphere = new Sphere(center, 1, 1, true,
-                100);
-            Sphere largeSphere = new Sphere(center, 2, 1, false,
-                refractionIndex);
-            shapes.Add(smallSphere);
-            shapes.Add(largeSphere);
+            shapes.Add(new Plane(new([2, 0, 0]),
+                new([-1, 0, 0]), 1, false, 1, color));
+            shapes.Add(new Plane(new([-2, 0, 0]),
+                new([1, 0, 0]), 1, false, 1, color));
+            Plane solutionPlane = new Plane(new([0, 2, 0]),
+                new([0, -1, 0]), 1, false, 1, color);
+            shapes.Add(solutionPlane);
+            shapes.Add(new Plane(new([0, -2, 0]),
+                new([0, 1, 0]), 1, false, 1, color));
+            shapes.Add(new Plane(new([0, 0, 2]),
+                new([0, 0, 1]), 1, false, 1, color));
+            shapes.Add(new Plane(new([0, 0, -2]),
+                new([0, 0, 1]), 1, false, 1, color));
             World world = new World(shapes,
-                new LightSource(new([0, 10, 0]), 1));
+                new LightSource(new([0, 10, 0]), 1), backgroundColor);
             Line line = new Line(new([0.99, 0, 0]), new([0, 1, 0]));
 
             Intersection intersection =
                 world.getClosestIntersectionWrapper(line);
 
-            //Assert.Null(intersection);
-            Assert.Fail();
+            Intersection solution = new Intersection(new([0.99, 2, 0]),
+                solutionPlane);
+
+            Assert.Equal(solution, intersection);
+        }
+
+
+        [Fact]
+        public void returnNullWhenTrappedInSphere()
+        {
+            Vector center = new([0, 0, 0]);
+            Sphere smallSphere = new Sphere(center, 1, 1, true,
+                100, color);
+            shapes.Add(smallSphere);
+            shapes.Add(new Plane(new([2, 0, 0]),
+                new([-1, 0, 0]), 1, false, 1, color));
+            shapes.Add(new Plane(new([-2, 0, 0]),
+                new([1, 0, 0]), 1, false, 1, color));
+            shapes.Add(new Plane(new([0, 2, 0]),
+                new([0, -1, 0]), 1, false, 1, color));
+            shapes.Add(new Plane(new([0, -2, 0]),
+                new([0, 1, 0]), 1, false, 1, color));
+            shapes.Add(new Plane(new([0, 0, 2]),
+                new([0, 0, 1]), 1, false, 1, color));
+            shapes.Add(new Plane(new([0, 0, -2]),
+                new([0, 0, 1]), 1, false, 1, color));
+            World world = new World(shapes,
+                new LightSource(new([0, 10, 0]), 1), backgroundColor);
+            Line line = new Line(new([0.99, 0, 0]), new([0, 1, 0]));
+
+            Intersection intersection =
+                world.getClosestIntersectionWrapper(line);
+
+            Assert.Null(intersection);
+            //Assert.Fail();
         }
 
         [Fact]
         public void getBrightnessWithSingleSphere()
         {
             shapes.Add(new Sphere());
-            World world = new World(shapes, new LightSource(new([10, 0, 0]), 1));
+            World world = new World(shapes, new LightSource(new([10, 0, 0]), 1), backgroundColor);
 
             Line line = new Line(new([10, 0, 0]), new([-1, 0, 0]));
 
             Intersection intersection = world.getClosestIntersectionWrapper(line);
 
-            Assert.Equal(1, world.calcBrightnessWrapper(intersection));
+            Assert.Equal(Color.White, world.calcColorAtIntersectionWrapper(intersection));
         }
 
         [Fact]
         public void getBrightnessWithOnShadowSideShouldReturnZero()
         {
             shapes.Add(new Sphere());
-            World world = new World(shapes, new LightSource(new([-10, 0, 0]), 1));
+            World world = new World(shapes, new LightSource(new([-10, 0, 0]), 1), backgroundColor);
 
             Line line = new Line(new([10, 0, 0]), new([-1, 0, 0]));
 
             Intersection intersection = world.getClosestIntersectionWrapper(line);
 
-            Assert.Equal(0, world.calcBrightnessWrapper(intersection));
+            Assert.Equal(backgroundColor,
+                world.calcColorAtIntersectionWrapper(intersection));
         }
 
         [Fact]
         public void getBrightnessWithBlockedLightSourceShouldReturnZero()
         {
             shapes.Add(new Sphere());
-            shapes.Add(new Sphere(new([0, 8, 0]), 1, 1, refracts, refractionIndex));
-            World world = new World(shapes, new LightSource(new([0, 10, 0]), 1));
+            shapes.Add(new Sphere(new([0, 8, 0]), 1, 1, refracts, refractionIndex, color));
+            World world = new World(shapes, new LightSource(new([0, 10, 0]), 1), backgroundColor);
 
             Line line = new Line(new([10, 0, 0]), new([-1, 0, 0]));
 
             Intersection intersection = world.getClosestIntersectionWrapper(line);
 
-            Assert.Equal(0, world.calcBrightnessWrapper(intersection));
+            Assert.Equal(backgroundColor,
+                world.calcColorAtIntersectionWrapper(intersection));
         }
     }
 }

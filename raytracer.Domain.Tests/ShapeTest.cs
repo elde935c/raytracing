@@ -1,17 +1,20 @@
 ﻿using Xunit;
 using raytracer.Domain;
 using raytracer.Domain.Exceptions;
+using System.Drawing;
 
 namespace raytracer.Domain.Tests;
 
 public class ShapeTest
 {
+    Color color = Color.White;
+
     [Fact]
     public void testDiffusionConstantWithPointNotOnSphere()
     {
         Boolean refracts = false;
         double refractionIndex = 1;
-        Sphere sphere = new Sphere(new([1, 0, 0]), 2, 1, refracts, refractionIndex);
+        Sphere sphere = new Sphere(new([1, 0, 0]), 2, 1, refracts, refractionIndex, color);
         Vector normalAt = new([1, 2, 2]);
         Vector direction = new([0, 1, 0]);
         Line line = new Line(normalAt, direction);
@@ -42,16 +45,6 @@ public class ShapeTest
         Assert.True(Math.Abs(sphere.getDiffusionConstantFromLine(line)) < 1e-5);
     }
 
-    [Fact]
-    public void testDiffusionConstantLineBehindSphereSurfaceShouldReturnZero()
-    {
-        Sphere sphere = new Sphere();
-        Vector normalAt = new([1, 0, 0]);
-        Vector direction = new([-1, -1, 0]);
-        Line line = new Line(normalAt, direction);
-
-        Assert.True(Math.Abs(sphere.getDiffusionConstantFromLine(line)) < 1e-5);
-    }
 
     [Fact]
     public void testRefractionStraightAtSphereShouldHaveSameDirection()

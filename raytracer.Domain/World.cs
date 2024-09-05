@@ -1,17 +1,22 @@
-﻿namespace raytracer.Domain;
+﻿using System.Drawing;
+
+namespace raytracer.Domain;
 
 public class World 
 {
+    // the refraction index of the air is assumed to be 1
     private readonly List<Shape> shapes;
     private readonly LightSource lightSource;
+    private readonly Color backgroundColor = Color.DarkBlue;
 
-    public World (List<Shape> shapes, LightSource lightsource)
+    public World(List<Shape> shapes, LightSource lightsource, Color backgroundColor)
     {
         this.shapes = shapes;
         this.lightSource = lightsource;
+        this.backgroundColor = backgroundColor;
     }
 
-    private Intersection getClosestIntersection(Line line) //todo make private
+    private Intersection getClosestIntersection(Line line) 
     {
         Intersection closest = null;
         foreach (Shape shape in shapes)
@@ -44,23 +49,23 @@ public class World
         return i2;
     }
 
-    private double calcBrightness(Intersection intersection) 
+    private Color calcColorAtIntersection(Intersection intersection) 
     {
         Vector intersectionCoord = intersection.getCoord();
         Line intersectionToLight = new Line(intersectionCoord,
             lightSource.getCoord() - intersectionCoord);
 
         if (getClosestIntersection(intersectionToLight) == null)
-            return intersection.getShape().getDiffusionConstantFromLine(
+            return intersection.getShape().getColorFromLine(
                 intersectionToLight);
-        return 0.0;
+        return backgroundColor;
     }
 
-    public double getBrightness(Line line)
+    public Color getColorAtIntersection(Line line)
     {
         Intersection intersection = getClosestIntersection(line);
-        if (intersection==null) return 0.0;
-        return calcBrightness(intersection);
+        if (intersection==null) return backgroundColor;
+        return calcColorAtIntersection(intersection);
     }
 
 
@@ -69,9 +74,9 @@ public class World
         return getClosestIntersection(line);
     }
 
-    internal protected double calcBrightnessWrapper(Intersection intersection)
+    internal protected Color calcColorAtIntersectionWrapper(Intersection intersection)
     {
-        return calcBrightness(intersection);
+        return calcColorAtIntersection(intersection);
     }
 }
 

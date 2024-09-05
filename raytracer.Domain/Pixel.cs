@@ -8,15 +8,9 @@ namespace raytracer.Domain
         public Pixel()
         {        }
 
-        public void SetRgb(double brightness)
+        public void SetRgb(Color color)
         {
-            // brightness \in (0,1)
-
-            int red = (int)(brightness * 0xFF);
-            int green = (int)(brightness * 0xFF);
-            int blue = (int)(brightness * 0xFF);
-
-            color = Color.FromArgb(red, green, blue);
+            this.color = color;
         }
 
         public Color getRGB() { return color; }

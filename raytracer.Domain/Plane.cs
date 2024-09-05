@@ -1,4 +1,5 @@
 ﻿using raytracer.Domain.Exceptions;
+using System.Drawing;
 
 
 namespace raytracer.Domain;
@@ -8,16 +9,16 @@ public class Plane : Shape
     private Vector pointOnPlane;
     private Vector normal;
 
-    public Plane(Vector pointOnPlane, Vector normal, 
-        double diffusionConstant, bool refracts, 
-        double refractionIndex)
-        : base(diffusionConstant, refracts, refractionIndex)
+    public Plane(Vector pointOnPlane, Vector normal,
+        double diffusionConstant, bool refracts,
+        double refractionIndex, Color color)
+        : base(diffusionConstant, refracts, refractionIndex, color)
     {
         this.pointOnPlane = pointOnPlane;
         this.normal = normal / normal.norm() ;
     }
 
-    public Plane() : base(1, false, 1)
+    public Plane() : base(1, false, 1, Color.White)
     {
         this.pointOnPlane = new([0,0,0]);
         this.normal = new([1, 0, 0]);
@@ -33,7 +34,7 @@ public class Plane : Shape
         if (Vector.dot(startToPointOnPlane, lineDirection) <= 0) 
             return null;
 
-        double t = - Vector.dot(normal, lineStart) /
+        double t = - Vector.dot(normal, (lineStart-pointOnPlane)) /
             Vector.dot(normal, lineDirection);
 
         Vector intersectionCoord = lineStart + t * lineDirection;
