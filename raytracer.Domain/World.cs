@@ -7,33 +7,43 @@ public class World
     // the refraction index of the air is assumed to be 1
     private readonly List<Shape> shapes;
     private readonly LightSource lightSource;
-    private readonly Color backgroundColor = Color.DarkBlue;
+    private readonly MyColor backgroundColor;
 
-    public World(List<Shape> shapes, LightSource lightsource, Color backgroundColor)
+    public World(List<Shape> shapes, 
+        LightSource lightsource, 
+        MyColor backgroundColor)
     {
         this.shapes = shapes;
         this.lightSource = lightsource;
         this.backgroundColor = backgroundColor;
     }
 
-    private Intersection getClosestIntersection(Line line) 
+    private Intersection getClosestIntersection(Line line,
+        bool includeRefractingObjects)
     {
+        if (!shapes.Any())
+        {
+            return null;
+        }
         Intersection closest = null;
         foreach (Shape shape in shapes)
         {
-            Intersection nextIntersection = shape.intersect(line);
-            if (nextIntersection != null)
+            if (includeRefractingObjects || (!shape.getRefracts()))
             {
-                if (closest == null) closest = nextIntersection;
-                else
+                Intersection nextIntersection = shape.intersect(line);
+                if (nextIntersection != null)
                 {
-                    closest = returnClosest(closest,
-                        nextIntersection, line);
+                    if (closest == null) closest = nextIntersection;
+                    else
+                    {
+                        closest = returnClosest(closest,
+                            nextIntersection, line);
+                    }
                 }
             }
         }
         if (closest != null && closest.getShape().getRefracts())
-            return getClosestIntersection(closest.getRefractedLine(line));
+            return getClosestIntersection(closest.getRefractedLine(line), true);
         return closest;
     }
 
@@ -49,34 +59,62 @@ public class World
         return i2;
     }
 
-    private Color calcColorAtIntersection(Intersection intersection) 
+    private MyColor calcColorAtIntersection(Intersection intersection,
+        Line inComingLine)
     {
         Vector intersectionCoord = intersection.getCoord();
+        Vector intersectionToLightDirection = lightSource.getCoord() - 
+            intersectionCoord;
         Line intersectionToLight = new Line(intersectionCoord,
-            lightSource.getCoord() - intersectionCoord);
+            intersectionToLightDirection);
 
-        if (getClosestIntersection(intersectionToLight) == null)
+        if (intersection.getShape().shapeBlocksLight(
+            inComingLine.getDirection(),
+            intersectionCoord, intersectionToLightDirection))
+        { // shape itself blocks light 
+            return MyColor.Black;
+        }
+
+        // exclude refracting objects, they do not cast a shadow
+        // it will be too complicated otherwise
+        Intersection closest = 
+            getClosestIntersection(intersectionToLight, false);
+
+        if (closest == null)
+        { // not blocked by other shape
             return intersection.getShape().getColorFromLine(
                 intersectionToLight);
-        return backgroundColor;
+        }
+        else if ((intersectionCoord - closest.getCoord()).norm() > 
+                intersectionToLightDirection.norm()) 
+        { // lightsource is between other shape and intersection
+            return intersection.getShape().getColorFromLine(
+                intersectionToLight);
+        }
+
+        return MyColor.Black;
     }
 
-    public Color getColorAtIntersection(Line line)
+    public MyColor getColorAtIntersection(Line line)
     {
-        Intersection intersection = getClosestIntersection(line);
-        if (intersection==null) return backgroundColor;
-        return calcColorAtIntersection(intersection);
+        Intersection intersection = getClosestIntersection(line, true);
+        if (intersection == null)
+        {
+            return backgroundColor;
+        }
+        return calcColorAtIntersection(intersection, line);
     }
 
 
     internal protected Intersection getClosestIntersectionWrapper(Line line)
     {
-        return getClosestIntersection(line);
+        return getClosestIntersection(line, true);
     }
 
-    internal protected Color calcColorAtIntersectionWrapper(Intersection intersection)
+    internal protected MyColor calcColorAtIntersectionWrapper(
+        Intersection intersection, Line line)
     {
-        return calcColorAtIntersection(intersection);
+        return calcColorAtIntersection(intersection, line);
     }
 }
 

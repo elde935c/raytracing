@@ -6,19 +6,19 @@ namespace raytracer.Domain;
 
 public class Plane : Shape
 {
-    private Vector pointOnPlane;
-    private Vector normal;
+    protected Vector pointOnPlane;
+    protected Vector normal;
 
     public Plane(Vector pointOnPlane, Vector normal,
         double diffusionConstant, bool refracts,
-        double refractionIndex, Color color)
+        double refractionIndex, MyColor color)
         : base(diffusionConstant, refracts, refractionIndex, color)
     {
         this.pointOnPlane = pointOnPlane;
         this.normal = normal / normal.norm() ;
     }
 
-    public Plane() : base(1, false, 1, Color.White)
+    public Plane() : base(1, false, 1, MyColor.White)
     {
         this.pointOnPlane = new([0,0,0]);
         this.normal = new([1, 0, 0]);
@@ -36,6 +36,11 @@ public class Plane : Shape
 
         double t = - Vector.dot(normal, (lineStart-pointOnPlane)) /
             Vector.dot(normal, lineDirection);
+        if (t<1e-9)
+        { //lineStart is on the plane,
+          //or intersection at plane is in opposite direction
+            return null;
+        }
 
         Vector intersectionCoord = lineStart + t * lineDirection;
 

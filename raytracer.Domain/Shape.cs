@@ -9,14 +9,15 @@ abstract public class Shape
     protected double diffusionConstant;
     protected Boolean refracts;
     protected double refractionIndex;
-    private Color color;
+    protected MyColor color;
 
     public Shape(double diffusionConstant, Boolean refracts,
-        double refractionIndex, Color color)
+        double refractionIndex, MyColor color)
     {
         this.diffusionConstant = diffusionConstant;
         this.refracts = refracts;
         this.refractionIndex = refractionIndex;
+        this.color = color;
     }
     
     public virtual Intersection intersect(Line line) { return null; }
@@ -26,7 +27,7 @@ abstract public class Shape
 
     protected virtual Boolean pointIsOnShape(Vector point) { return false; }
 
-    public double getDiffusionConstantFromLine(Line ln) //todo make private
+    protected double getDiffusionConstantFromLine(Line ln) //todo make private
     {
         Vector lineStart = ln.getStart();
         if (pointIsOnShape(lineStart))
@@ -43,14 +44,11 @@ abstract public class Shape
             + " is not on shape with center");
     }
 
-    public Color getColorFromLine(Line ln)
+    public virtual MyColor getColorFromLine(Line ln)
     {
         double brightness = getDiffusionConstantFromLine(ln);
-        int red = (int)(brightness * color.R);
-        int green = (int)(brightness * color.G);
-        int blue = (int)(brightness * color.B);
 
-        return Color.FromArgb(red, green, blue);
+        return brightness * color;
     }
 
     public Boolean getRefracts() { return refracts; }
@@ -77,7 +75,7 @@ abstract public class Shape
         }
 
         double rootArgument = 1.0 - 1.0 / Math.Pow(currentRefractionIndex, 2) *
-            (1 - Math.Pow(-dotProduct, 2));
+            (1 - Math.Pow(dotProduct, 2));
 
         Vector refractionDirection;
         if (rootArgument < 0) 
@@ -94,6 +92,15 @@ abstract public class Shape
         
 
         return new Line(intersectionCoord, refractionDirection);
+    }
+
+
+    public Boolean shapeBlocksLight(Vector directionIn, Vector intersectCoord,
+        Vector directionOut)
+    {
+        Vector normalAt = getNormal(intersectCoord);
+        return Vector.dot(directionIn, normalAt) *
+            Vector.dot(directionOut, normalAt) > 0;
     }
 
 
@@ -116,5 +123,10 @@ abstract public class Shape
         return refractionIndex.GetHashCode() + 
             refracts.GetHashCode() + 
             diffusionConstant.GetHashCode();
+    }
+
+    internal protected double getDiffusionConstantFromLineWrapper(Line line)
+    {
+        return getDiffusionConstantFromLine(line);
     }
 }

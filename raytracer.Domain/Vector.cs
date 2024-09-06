@@ -79,6 +79,14 @@ public class Vector
         return dotProduct;
     }
 
+    public static Vector crossProduct(Vector v1, Vector v2)
+    { // todo throw error if v1.size() != 3
+        return new ([v1[1] * v2[2] - v2[1] * v1[2],
+            v1[2] * v2[0] - v1[0] * v2[2],
+            v1[0] * v2[1] - v2[0] * v1[1]]);
+        
+    }
+
     public double norm()
     {
         double vectorNorm = 0;

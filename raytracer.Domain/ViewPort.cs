@@ -50,7 +50,8 @@ public class ViewPort
         {
             Parallel.For(0, screenWidth * screenHeight, i =>
             {
-                pixels[i].SetRgb(scene.GetWorld().getColorAtIntersection(getLine(i)));
+                pixels[i].SetColor(scene.GetWorld().
+                    getColorAtIntersection(getLine(i)));
             });
         }
 
@@ -58,7 +59,8 @@ public class ViewPort
         {
             for (int i=0; i<screenHeight*screenWidth; i++)
             {
-                pixels[i].SetRgb(scene.GetWorld().getColorAtIntersection(getLine(i)));
+                pixels[i].SetColor(scene.GetWorld().
+                    getColorAtIntersection(getLine(i)));
             }
         }
 
@@ -82,7 +84,7 @@ public class ViewPort
         {
             int x = i % screenWidth;
             int y = i / screenHeight;
-            image.SetPixel(x, y, pixels[i].getRGB());
+            image.SetPixel(x, y, pixels[i].getColor());
         }
         return image;
     }

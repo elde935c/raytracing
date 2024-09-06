@@ -6,7 +6,7 @@ using System.Drawing;
 
 public class SphereTest
 {
-    Color color = Color.White;
+    MyColor color = MyColor.White;
 
     [Fact]
     public void lineAlongZaxisThroughUnitSphere()

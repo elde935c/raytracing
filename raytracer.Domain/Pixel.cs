@@ -4,15 +4,18 @@ namespace raytracer.Domain
 {
     public class Pixel
     {
-        private Color color;
+        private MyColor color;
         public Pixel()
         {        }
 
-        public void SetRgb(Color color)
+        public void SetColor(MyColor color)
         {
             this.color = color;
         }
 
-        public Color getRGB() { return color; }
+        public Color getColor() 
+        {
+            return Color.FromArgb(color.R, color.G, color.B); ;
+        }
     }
 }

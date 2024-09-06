@@ -7,7 +7,7 @@ using System.Drawing;
 
 public class PlaneTest
 {
-    Color color = Color.White;
+    MyColor color = MyColor.White;
 
     [Fact]
     public void lineStraightAtPlaneThroughOrigin()
@@ -61,6 +61,8 @@ public class PlaneTest
 
         Assert.Equal(solution, intersection);
     }
+
+    
 
 
     [Fact]

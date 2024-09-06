@@ -7,7 +7,7 @@ namespace raytracer.Domain.Tests;
 
 public class ShapeTest
 {
-    Color color = Color.White;
+    MyColor color = MyColor.White;
 
     [Fact]
     public void testDiffusionConstantWithPointNotOnSphere()
@@ -20,7 +20,7 @@ public class ShapeTest
         Line line = new Line(normalAt, direction);
 
         Assert.Throws<PointNotOnShapeException>(() =>
-            sphere.getDiffusionConstantFromLine(line));
+            sphere.getDiffusionConstantFromLineWrapper(line));
     }
 
     [Fact]
@@ -31,7 +31,7 @@ public class ShapeTest
         Vector direction = new([1, 0, 0]);
         Line line = new Line(normalAt, direction);
 
-        Assert.True(Math.Abs(sphere.getDiffusionConstantFromLine(line) - 1) < 1e-5);
+        Assert.True(Math.Abs(sphere.getDiffusionConstantFromLineWrapper(line) - 1) < 1e-5);
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class ShapeTest
         Vector direction = new([0, 1, 0]);
         Line line = new Line(normalAt, direction);
 
-        Assert.True(Math.Abs(sphere.getDiffusionConstantFromLine(line)) < 1e-5);
+        Assert.True(Math.Abs(sphere.getDiffusionConstantFromLineWrapper(line)) < 1e-5);
     }
 
 
@@ -60,6 +60,43 @@ public class ShapeTest
         Line solution = new Line(intersection, direction);
 
         Assert.Equal(solution, newLine);
+    }
+
+    [Fact]
+    public void testColorConstantWithPointNotOnSphere()
+    {
+        Boolean refracts = false;
+        double refractionIndex = 1;
+        Sphere sphere = new Sphere(new([1, 0, 0]), 2, 1, 
+            refracts, refractionIndex, color);
+        Vector normalAt = new([1, 2, 2]);
+        Vector direction = new([0, 1, 0]);
+        Line line = new Line(normalAt, direction);
+
+        Assert.Throws<PointNotOnShapeException>(() =>
+            sphere.getColorFromLine(line));
+    }
+
+    [Fact]
+    public void testColorPerpendicularLineShouldReturnWhite()
+    {
+        Sphere sphere = new Sphere();
+        Vector normalAt = new([1, 0, 0]);
+        Vector direction = new([1, 0, 0]);
+        Line line = new Line(normalAt, direction);
+
+        Assert.Equal(MyColor.White, sphere.getColorFromLine(line));
+    }
+
+    [Fact]
+    public void testColorParallelLineShouldReturnBlack()
+    {
+        Sphere sphere = new Sphere();
+        Vector normalAt = new([1, 0, 0]);
+        Vector direction = new([0, 1, 0]);
+        Line line = new Line(normalAt, direction);
+
+        Assert.Equal(MyColor.Black, sphere.getColorFromLine(line));
     }
 }
 

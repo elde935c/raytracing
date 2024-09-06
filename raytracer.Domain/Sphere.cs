@@ -11,14 +11,14 @@ public class Sphere : Shape
 
     public Sphere(Vector center, double radius,
         double diffusionConstant, bool refracts,
-        double refractionIndex, Color color)
+        double refractionIndex, MyColor color)
         : base(diffusionConstant, refracts, refractionIndex, color)
     {
         this.center = center;
         this.radius = radius;
     }
 
-    public Sphere() : base(1, false, 1, Color.White)
+    public Sphere() : base(1, false, 1, MyColor.White)
     {
         this.center = new([0, 0, 0]);
         this.radius = 1;
@@ -42,12 +42,12 @@ public class Sphere : Shape
         {
             double t0 = (-B - Math.Sqrt(Discriminant)) / 2 / A;
             double t1 = (-B + Math.Sqrt(Discriminant)) / 2 / A;
-            if (t1>1e-9 && (t0<-1e-9 || t0>t1))
+            if (t1>1e-9 && (t0<1e-9 || t0>t1))
             { // t1>0 for the right direction, t0 must be either negative or larger than t1
                 return new Intersection(lineStart + 
                     (t1*lineDirection), this);
             }
-            else if (t0 > 1e-9 && (t1 < -1e-9 || t1 > t0))
+            else if (t0 > 1e-9 && (t1 < 1e-9 || t1 > t0))
             {
                 return new Intersection(lineStart + 
                     (t0 * lineDirection), this);
