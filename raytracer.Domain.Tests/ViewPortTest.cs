@@ -12,7 +12,7 @@ public class ViewPortTest
   // these are not unit tests, so they are disabled
     MyColor color = MyColor.White;
     MyColor backgroundColor = MyColor.DarkBlue;
-    const string skip = "Class ViewPortTest disabled";
+    const string skip = null; //"Class ViewPortTest disabled";
 
     [Fact(Skip = skip)]
     public void testIfPictureIsMadeUnitSphereLigthFromAbove()
@@ -259,6 +259,46 @@ public class ViewPortTest
     }
 
     [Fact(Skip = skip)]
+    public void nicePicture()
+    {
+        List<Shape> shapes = new List<Shape>();
+        shapes.Add(new PlaneRaster(new([0, 0, 0]), new([0, 1, 0]),
+            1, false, 1, MyColor.White, new([0, 0, 1]), MyColor.DarkGreen,
+            0.1, 2));
+        //solid
+        shapes.Add(new Sphere(new([0, 2, 0]), 2, 0.5, false, 1, MyColor.Red));
+        //lense
+        shapes.Add(new Sphere(new([3, 1, -2]), 1, 0.5, true, 1.5, MyColor.DarkRed));
+        //mirror
+        shapes.Add(new Sphere(new([-4, 3, 4]), 3, 0.5, true, 1e-4, MyColor.DarkRed));
+
+        double xCoord = 7;
+        double yCoord = 3;
+        double screenWidth = 1;
+               
+
+        World world = new World(shapes,
+            new LightSource(new([xCoord, yCoord+10, 0]), 1), backgroundColor);
+
+        Vector[] corners = [new([xCoord, yCoord+screenWidth, -screenWidth]),
+                        new([xCoord, yCoord+ screenWidth, screenWidth]),
+                        new([xCoord, yCoord- screenWidth, -screenWidth])];
+
+        Vector viewPoint = new([xCoord + 1, yCoord, 0]);
+
+        int numPixels = 2160;
+
+        Scene scene = new Scene(world, corners, viewPoint,
+            numPixels, numPixels);
+
+        ViewPort viewPort =
+            new ViewPort(corners, viewPoint, numPixels,
+            numPixels, scene);
+
+        viewPort.createImage("nicePicture.png", true);
+    }
+
+    [Fact(Skip = skip)]
     public void sphereAsMirrorNextToRaster()
     {
         List<Shape> shapes = new List<Shape>();
@@ -270,7 +310,7 @@ public class ViewPortTest
 
         shapes.Add(new Sphere(new([xCoord, 0, 0]), 2, 1, true,
             0.1, color));
-               
+
 
         World world = new World(shapes,
             new LightSource(new([xCoord, yCoord, 0]), 1), backgroundColor);

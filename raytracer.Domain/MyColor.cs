@@ -54,4 +54,7 @@ public class MyColor
     public static MyColor Red { get; } = new MyColor(255, 0, 0);
     public static MyColor Green { get; } = new MyColor(0, 255, 0);
     public static MyColor Blue { get; } = new MyColor(0, 0, 255);
+    public static MyColor DarkGreen { get; } = new MyColor(0, 55, 0);
+
+    public static MyColor DarkRed { get; } = new MyColor(100, 0, 0);
 }

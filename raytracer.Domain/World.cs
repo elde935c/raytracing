@@ -21,29 +21,34 @@ public class World
     private Intersection getClosestIntersection(Line line,
         bool includeRefractingObjects)
     {
-        if (!shapes.Any())
-        {
-            return null;
-        }
         Intersection closest = null;
         foreach (Shape shape in shapes)
         {
             if (includeRefractingObjects || (!shape.getRefracts()))
             {
                 Intersection nextIntersection = shape.intersect(line);
-                if (nextIntersection != null)
-                {
-                    if (closest == null) closest = nextIntersection;
-                    else
-                    {
-                        closest = returnClosest(closest,
-                            nextIntersection, line);
-                    }
-                }
+                closest = updateClosestIntersection(
+                    closest, nextIntersection, line);
+                
             }
         }
         if (closest != null && closest.getShape().getRefracts())
             return getClosestIntersection(closest.getRefractedLine(line), true);
+        return closest;
+    }
+
+
+    private Intersection updateClosestIntersection(
+        Intersection closest, Intersection nextIntersection, Line line)
+    {
+        if (nextIntersection != null)
+        {
+            if (closest == null) closest = nextIntersection;
+            else
+            {
+                closest = returnClosest(closest, nextIntersection, line);
+            }
+        }
         return closest;
     }
 
@@ -78,7 +83,7 @@ public class World
         // exclude refracting objects, they do not cast a shadow
         // it will be too complicated otherwise
         Intersection closest = 
-            getClosestIntersection(intersectionToLight, false);
+            getClosestIntersection(intersectionToLight, true);
 
         if (closest == null)
         { // not blocked by other shape
